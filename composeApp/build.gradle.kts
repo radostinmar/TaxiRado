@@ -5,10 +5,10 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
+    id("org.jetbrains.kotlin.multiplatform")
+    id("com.android.application")
+    id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.0.0"
 }
 
@@ -51,7 +51,7 @@ kotlin {
         
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+            implementation("androidx.activity:activity-compose:1.9.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,10 +60,10 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+            implementation("io.ktor:ktor-client-core:2.3.11")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
         }
     }
@@ -71,7 +71,7 @@ kotlin {
 
 android {
     namespace = "com.taxirado"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 34
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -79,8 +79,8 @@ android {
 
     defaultConfig {
         applicationId = "com.taxirado"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
