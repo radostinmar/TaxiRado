@@ -10,54 +10,107 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+
+// Navigation routes
+object Routes {
+    const val ROLE_SELECTION = "role_selection"
+    const val REGISTRATION = "registration/{role}"
+    const val MAIN_MENU = "main_menu"
+    const val DRIVER_HOME = "driver_home"
+    const val PASSENGER_HOME = "passenger_home"
+    
+    fun registration(role: UserRole) = "registration/${role.name}"
+}
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var currentScreen by remember { mutableStateOf<Screen>(Screen.RoleSelection) }
+        val navController = rememberNavController()
         var currentUser by remember { mutableStateOf<UserResponse?>(null) }
 
-        when (currentScreen) {
-            Screen.RoleSelection -> RoleSelectionScreen { role ->
-                currentScreen = Screen.Registration(role)
-            }
-            is Screen.Registration -> RegistrationScreen(
-                role = (currentScreen as Screen.Registration).role,
-                onRegistered = { user ->
-                    currentUser = user
-                    currentScreen = when (user.role) {
-                        UserRole.DRIVER -> Screen.DriverHome
-                        UserRole.PASSENGER -> Screen.PassengerHome
-                        UserRole.BOTH -> Screen.MainMenu
+        NavHost(
+            navController = navController,
+            startDestination = Routes.ROLE_SELECTION
+        ) {
+            composable(Routes.ROLE_SELECTION) {
+                RoleSelectionScreen(
+                    onRoleSelected = { role ->
+                        navController.navigate(Routes.registration(role))
                     }
-                }
-            )
-            Screen.MainMenu -> MainMenuScreen(
-                onDriverSelected = { currentScreen = Screen.DriverHome },
-                onPassengerSelected = { currentScreen = Screen.PassengerHome }
-            )
-            Screen.DriverHome -> DriverHomeScreen(
-                user = currentUser,
-                onBack = { currentScreen = if (currentUser?.role == UserRole.BOTH) Screen.MainMenu else Screen.RoleSelection }
-            )
-            Screen.PassengerHome -> PassengerHomeScreen(
-                user = currentUser,
-                onBack = { currentScreen = if (currentUser?.role == UserRole.BOTH) Screen.MainMenu else Screen.RoleSelection }
-            )
+                )
+            }
+
+            composable(Routes.REGISTRATION) { backStackEntry ->
+                val roleString = backStackEntry.arguments?.getString("role")
+                val role = roleString?.let { UserRole.valueOf(it) } ?: UserRole.PASSENGER
+                
+                RegistrationScreen(
+                    role = role,
+                    onRegistered = { user ->
+                        currentUser = user
+                        when (user.role) {
+                            UserRole.DRIVER -> navController.navigate(Routes.DRIVER_HOME) {
+                                popUpTo(Routes.ROLE_SELECTION) { inclusive = true }
+                            }
+                            UserRole.PASSENGER -> navController.navigate(Routes.PASSENGER_HOME) {
+                                popUpTo(Routes.ROLE_SELECTION) { inclusive = true }
+                            }
+                            UserRole.BOTH -> navController.navigate(Routes.MAIN_MENU) {
+                                popUpTo(Routes.ROLE_SELECTION) { inclusive = true }
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable(Routes.MAIN_MENU) {
+                MainMenuScreen(
+                    onDriverSelected = {
+                        navController.navigate(Routes.DRIVER_HOME)
+                    },
+                    onPassengerSelected = {
+                        navController.navigate(Routes.PASSENGER_HOME)
+                    }
+                )
+            }
+
+            composable(Routes.DRIVER_HOME) {
+                DriverHomeScreen(
+                    user = currentUser,
+                    onBack = {
+                        if (currentUser?.role == UserRole.BOTH) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(Routes.ROLE_SELECTION) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable(Routes.PASSENGER_HOME) {
+                PassengerHomeScreen(
+                    user = currentUser,
+                    onBack = {
+                        if (currentUser?.role == UserRole.BOTH) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(Routes.ROLE_SELECTION) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
-}
-
-sealed class Screen {
-    object RoleSelection : Screen()
-    data class Registration(val role: UserRole) : Screen()
-    object MainMenu : Screen()
-    object DriverHome : Screen()
-    object PassengerHome : Screen()
 }
 
 @Composable

@@ -19,8 +19,10 @@ A modern ridesharing application built with Compose Multiplatform for Android, i
 ### Frontend
 - **Compose Multiplatform**: Shared UI across Android, iOS, and Web
 - **Kotlin**: Primary programming language
+- **Navigation 3**: Jetpack Compose Navigation for type-safe routing
 - **Ktor Client**: HTTP client for API communication
 - **Kotlinx Serialization**: JSON serialization
+- **Latest Standards**: Android Target SDK 35, iOS App Store compliance
 
 ### Backend
 - **Spring Boot 3.2.5**: Backend framework

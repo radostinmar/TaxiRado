@@ -44,6 +44,13 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            
+            // iOS deployment target
+            binaryOption("bundleId", "com.taxirado")
+            binaryOption("bundleVersion", "1.0")
+            
+            // Export dependencies for Swift integration
+            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }
     }
     
@@ -51,7 +58,9 @@ kotlin {
         
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation("androidx.activity:activity-compose:1.9.0")
+            implementation("androidx.activity:activity-compose:1.9.2")
+            implementation("androidx.navigation:navigation-compose:2.8.4")
+            implementation("androidx.core:core-splashscreen:1.0.1")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -65,13 +74,14 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
         }
     }
 }
 
 android {
     namespace = "com.taxirado"
-    compileSdk = 34
+    compileSdk = 35
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -80,7 +90,7 @@ android {
     defaultConfig {
         applicationId = "com.taxirado"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }

@@ -66,14 +66,29 @@
 - **Status**: ✅ Code Complete (Not Built)
 - **Platforms**: Android, iOS, Web (WASM)
 - **Technology**: Jetpack Compose Multiplatform
+- **Navigation**: Navigation Compose 3 (Type-safe routing)
 
 - **Implemented Features**:
+  - Navigation 3 with NavHost and composable destinations
   - Role selection screen (Driver/Passenger/Both)
   - User registration flow
   - Driver ride announcement UI
   - Passenger ride browsing and booking UI
   - API client with Ktor
   - Shared business logic
+
+- **Android Compliance**:
+  - Target SDK 35 (Android 15) - Latest Google requirement
+  - Compile SDK 35
+  - Predictive Back Gesture support (`enableOnBackInvokedCallback`)
+  - Network state permission
+  - RTL support enabled
+
+- **iOS Compliance**:
+  - Bundle ID configuration for App Store
+  - Version and build number setup
+  - Coroutines export for Swift integration
+  - Framework configuration for iOS 14+
 
 - **Note**: Frontend code is complete but not currently buildable due to Gradle/Android plugin configuration complexity. The backend API is fully functional and can be used with any frontend technology.
 
