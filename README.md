@@ -37,21 +37,43 @@ A modern ridesharing application built with Compose Multiplatform for Android, i
 
 ## Running the Application
 
-### Using Docker Compose (Recommended)
+### Backend with Docker Compose
 
-The easiest way to run the backend:
+The backend can be run using Docker Compose. First, build the backend JAR locally:
+
+```bash
+# Build the backend JAR
+./gradlew :backend:bootJar --no-daemon
+```
+
+Then start the services:
 
 ```bash
 # Start the backend and PostgreSQL database
-docker-compose up --build
+docker-compose up --build -d
+
+# Check the status
+docker-compose ps
+
+# View logs
+docker-compose logs -f backend
 
 # The backend will be available at http://localhost:8080
+```
+
+**Note**: If the backend fails to start with "UnknownHostException: postgres", restart it:
+
+```bash
+docker-compose restart backend
 ```
 
 To stop the services:
 
 ```bash
 docker-compose down
+
+# To stop and remove volumes
+docker-compose down -v
 ```
 
 ### Running Locally (Development)
