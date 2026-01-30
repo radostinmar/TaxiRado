@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: taxirado-postgres
+    environment:
+      POSTGRES_DB: taxirado
+      POSTGRES_USER: taxirado
+      POSTGRES_PASSWORD: taxirado123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taxirado-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taxirado"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: taxirado-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taxirado
+      SPRING_DATASOURCE_USERNAME: taxirado
+      SPRING_DATASOURCE_PASSWORD: taxirado123
+    networks:
+      - taxirado-network
+
+networks:
+  taxirado-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
