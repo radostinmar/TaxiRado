@@ -10,6 +10,7 @@
   - PostgreSQL 15
   - JPA/Hibernate
   - RESTful API
+  - **Swagger/OpenAPI 3.0** - Interactive API documentation
 
 - **Implemented Features**:
   - User registration with roles (Driver, Passenger, Both)
@@ -17,6 +18,8 @@
   - Booking system
   - Database schema with relationships
   - CORS enabled for cross-origin requests
+  - **Swagger UI** at http://localhost:8080/swagger-ui.html
+  - **OpenAPI JSON** at http://localhost:8080/v3/api-docs
 
 - **API Endpoints**:
   ```
@@ -78,8 +81,8 @@
   - Shared business logic
 
 - **Android Compliance**:
-  - Target SDK 35 (Android 15) - Latest Google requirement
-  - Compile SDK 35
+  - Target SDK 36 (Android 16 Preview) - Latest available SDK
+  - Compile SDK 36
   - Predictive Back Gesture support (`enableOnBackInvokedCallback`)
   - Network state permission
   - RTL support enabled

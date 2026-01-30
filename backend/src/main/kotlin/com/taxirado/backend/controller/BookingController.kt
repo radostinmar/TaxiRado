@@ -7,6 +7,10 @@ import com.taxirado.backend.model.RideStatus
 import com.taxirado.backend.repository.BookingRepository
 import com.taxirado.backend.repository.RideRepository
 import com.taxirado.backend.repository.UserRepository
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/bookings")
 @CrossOrigin(origins = ["*"])
+@Tag(name = "Bookings", description = "Booking management API - passengers can book rides")
 class BookingController(
     private val bookingRepository: BookingRepository,
     private val rideRepository: RideRepository,
@@ -21,6 +26,12 @@ class BookingController(
 ) {
 
     @PostMapping
+    @Operation(summary = "Create a booking", description = "Passengers can book available seats on a ride")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "201", description = "Booking created successfully"),
+        ApiResponse(responseCode = "404", description = "Ride or passenger not found"),
+        ApiResponse(responseCode = "400", description = "Not enough available seats")
+    ])
     fun createBooking(@RequestBody request: BookingRequest): ResponseEntity<BookingResponse> {
         val ride = rideRepository.findById(request.rideId).orElse(null)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()

@@ -112,6 +112,21 @@ open iosApp.xcworkspace
 
 ## API Endpoints
 
+### Swagger/OpenAPI Documentation
+
+The backend includes interactive API documentation using Swagger/OpenAPI:
+
+```
+Swagger UI: http://localhost:8080/swagger-ui.html
+OpenAPI JSON: http://localhost:8080/v3/api-docs
+```
+
+The Swagger UI provides:
+- Interactive API testing
+- Request/response examples
+- Data model schemas
+- Authentication details (when applicable)
+
 ### Users
 - `POST /api/users/register` - Register a new user
 - `GET /api/users` - Get all users

@@ -6,6 +6,10 @@ import com.taxirado.backend.model.Ride
 import com.taxirado.backend.model.RideStatus
 import com.taxirado.backend.repository.RideRepository
 import com.taxirado.backend.repository.UserRepository
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,12 +18,18 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/api/rides")
 @CrossOrigin(origins = ["*"])
+@Tag(name = "Rides", description = "Ride management API - create and browse rides")
 class RideController(
     private val rideRepository: RideRepository,
     private val userRepository: UserRepository
 ) {
 
     @PostMapping
+    @Operation(summary = "Create a new ride", description = "Drivers can announce a new ride with origin, destination, time, and price")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "201", description = "Ride created successfully"),
+        ApiResponse(responseCode = "404", description = "Driver not found")
+    ])
     fun createRide(@RequestBody request: RideCreationRequest): ResponseEntity<RideResponse> {
         val driver = userRepository.findById(request.driverId).orElse(null)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
@@ -48,6 +58,8 @@ class RideController(
     }
 
     @GetMapping
+    @Operation(summary = "Get all rides", description = "Retrieve all rides in the system")
+    @ApiResponse(responseCode = "200", description = "List of all rides")
     fun getAllRides(): ResponseEntity<List<RideResponse>> {
         val rides = rideRepository.findAll()
         val responses = rides.map { ride ->
@@ -67,6 +79,8 @@ class RideController(
     }
 
     @GetMapping("/available")
+    @Operation(summary = "Get available rides", description = "Retrieve all available future rides that passengers can book")
+    @ApiResponse(responseCode = "200", description = "List of available rides")
     fun getAvailableRides(): ResponseEntity<List<RideResponse>> {
         val rides = rideRepository.findByStatus(RideStatus.AVAILABLE)
             .filter { it.departureTime.isAfter(LocalDateTime.now()) }
